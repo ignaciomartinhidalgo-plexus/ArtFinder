@@ -1,0 +1,72 @@
+name: CI
+
+# Only in pull requests targeting `develop` or `main`, and manually from the Actions tab.
+on:
+  pull_request:
+    branches: [develop, main]
+  workflow_dispatch:
+
+# If the PR is updated with new commits, the previous execution is cancelled.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Build & Test (iOS Simulator)
+    runs-on: macos-26
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Check layer dependencies
+        run: ./scripts/check-architecture.sh
+
+      - name: SwiftLint
+        run: |
+          which swiftlint || brew install swiftlint
+          swiftlint --strict --config .swiftlint.yml --reporter github-actions-logging
+
+      - name: Select latest Xcode 26
+        run: |
+          XCODE_PATH=$(ls -d /Applications/Xcode_26*.app | sort -V | tail -1)
+          echo "Using $XCODE_PATH"
+          sudo xcode-select -s "$XCODE_PATH"
+          xcodebuild -version
+          swift --version
+
+      - name: Pick an available iPhone simulator
+        id: simulator
+        run: |
+          UDID=$(xcrun simctl list devices available --json \
+            | jq -r '[.devices | to_entries[]
+                      | select(.key | test("iOS"))
+                      | .value[]
+                      | select(.name | startswith("iPhone"))]
+                     | last | .udid')
+          if [ -z "$UDID" ] || [ "$UDID" = "null" ]; then
+            echo "No iPhone simulator available" >&2
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "Using simulator $UDID"
+          echo "udid=$UDID" >> "$GITHUB_OUTPUT"
+
+      - name: Build & Test
+        run: |
+          set -o pipefail
+          xcodebuild test \
+            -project ArtFinder.xcodeproj \
+            -scheme ArtFinder \
+            -destination "id=${{ steps.simulator.outputs.udid }}" \
+            -resultBundlePath TestResults.xcresult \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestResults
+          path: TestResults.xcresult

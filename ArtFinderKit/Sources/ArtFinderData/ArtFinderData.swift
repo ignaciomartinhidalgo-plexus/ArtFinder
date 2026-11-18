@@ -1,0 +1,4 @@
+//
+//  ArtFinderData.swift
+//  ArtFinderKit
+//

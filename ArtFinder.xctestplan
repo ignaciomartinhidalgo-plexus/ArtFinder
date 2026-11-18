@@ -1,0 +1,55 @@
+{
+  "configurations" : [
+    {
+      "id" : "D9030605-2AEF-40D2-AC68-B7A4EDE26DD7",
+      "name" : "Default",
+      "options" : {}
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : {
+      "targets" : [
+        {
+          "containerPath" : "container:ArtFinderKit",
+          "identifier" : "ArtFinderDomain",
+          "name" : "ArtFinderDomain"
+        },
+        {
+          "containerPath" : "container:ArtFinderKit",
+          "identifier" : "ArtFinderData",
+          "name" : "ArtFinderData"
+        },
+        {
+          "containerPath" : "container:ArtFinderKit",
+          "identifier" : "ArtFinderPresentation",
+          "name" : "ArtFinderPresentation"
+        }
+      ]
+    },
+    "threadSanitizerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:ArtFinderKit",
+        "identifier" : "ArtFinderDomainTests",
+        "name" : "ArtFinderDomainTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:ArtFinderKit",
+        "identifier" : "ArtFinderDataTests",
+        "name" : "ArtFinderDataTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:ArtFinderKit",
+        "identifier" : "ArtFinderPresentationTests",
+        "name" : "ArtFinderPresentationTests"
+      }
+    }
+  ],
+  "version" : 1
+}
