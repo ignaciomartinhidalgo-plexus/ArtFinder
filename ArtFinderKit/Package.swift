@@ -15,7 +15,7 @@ let package = Package(
     targets: [
         .target(name: "ArtFinderDomain"),
         .target(name: "ArtFinderData", dependencies: ["ArtFinderDomain"]),
-        .target(name: "ArtFinderPresentation", dependencies: ["ArtFinderDomain"]),
+        .target(name: "ArtFinderPresentation", dependencies: ["ArtFinderDomain"], resources: [.process("Supporting")]),
         .testTarget(name: "ArtFinderDomainTests", dependencies: ["ArtFinderDomain"]),
         .testTarget(name: "ArtFinderDataTests", dependencies: ["ArtFinderData", "ArtFinderDomain"]),
         .testTarget(name: "ArtFinderPresentationTests", dependencies: ["ArtFinderPresentation", "ArtFinderDomain"]),
