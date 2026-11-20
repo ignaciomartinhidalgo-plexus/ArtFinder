@@ -1,4 +1,0 @@
-//
-//  ArtFinderPresentation.swift
-//  ArtFinderKit
-//
